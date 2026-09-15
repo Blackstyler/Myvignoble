@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CréaSite Studio - Créez votre site web gratuit</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Modern scrollbar and smooth transitions */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.4); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(156, 163, 175, 0.7); }
+        .tab-active { border-bottom: 2px solid #3b82f6; color: #3b82f6; font-weight: 600; }
+        .device-viewport { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans h-full flex flex-col overflow-hidden">
+
+    <!-- Application Header / Navigation -->
+    <header class="bg-slate-950 border-b border-slate-800 px-4 py-2.5 flex items-center justify-between z-30 shrink-0">
+        <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/20">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-slate-100 text-base leading-none">CréaSite <span class="text-blue-500 text-xs px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20">Studio FR</span></h1>
+                <p class="text-xs text-slate-400 mt-0.5">Éditeur & Concepteur Web Gratuit</p>
+            </div>
+        </div>
+
+        <!-- Viewport Controls (Desktop / Tablet / Mobile) -->
+        <div class="hidden md:flex items-center bg-slate-900 p-1 rounded-xl border border-slate-800 space-x-1">
+            <button id="btn-view-desktop" onclick="setDeviceView('desktop')" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-white shadow-sm flex items-center space-x-2 transition-all">
+                <i class="fa-solid fa-desktop"></i>
+                <span>Ordinateur</span>
+            </button>
+            <button id="btn-view-tablet" onclick="setDeviceView('tablet')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 flex items-center space-x-2 transition-all">
+                <i class="fa-solid fa-tablet-screen-button"></i>
+                <span>Tablette</span>
+            </button>
+            <button id="btn-view-mobile" onclick="setDeviceView('mobile')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 flex items-center space-x-2 transition-all">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+                <span>Mobile</span>
+            </button>
+        </div>
+
+        <!-- Action Controls -->
+        <div class="flex items-center space-x-2">
+            <button onclick="openHostingGuideModal()" class="px-3 py-1.5 rounded-lg border border-slate-700 hover:border-slate-600 text-slate-300 hover:text-white text-xs font-medium flex items-center space-x-2 transition-all">
+                <i class="fa-solid fa-circle-question text-blue-400"></i>
+                <span class="hidden sm:inline">Guide Hébergement Gratuit</span>
+            </button>
+            <button onclick="openExportModal()" class="px-4 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/30 flex items-center space-x-2 transition-all">
+                <i class="fa-solid fa-download"></i>
+                <span>Exporter le Code (Gratuit)</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace (Customizer Sidebar + Live Preview) -->
+    <div class="flex-1 flex overflow-hidden relative">
+
+        <!-- Left Sidebar: Customization Controls -->
+        <aside id="sidebar" class="w-full md:w-96 bg-slate-950 border-r border-slate-800 flex flex-col z-20 transition-all duration-300 absolute md:relative inset-y-0 left-0 -translate-x-full md:translate-x-0">
+            <!-- Sidebar Header / Tabs -->
+            <div class="border-b border-slate-800 bg-slate-950/50 backdrop-blur">
+                <div class="flex overflow-x-auto text-xs px-2 pt-2 scrollbar-none space-x-1" id="customizer-tabs">
+                    <button onclick="switchTab('design')" id="tab-design" class="tab-active px-3 py-2 whitespace-nowrap flex items-center space-x-2 transition-colors">
+                        <i class="fa-solid fa-palette"></i>
+                        <span>Style & Thème</span>
+                    </button>
+                    <button onclick="switchTab('hero')" id="tab-hero" class="text-slate-400 hover:text-slate-200 px-3 py-2 whitespace-nowrap flex items-center space-x-2 transition-colors">
+                        <i class="fa-solid fa-heading"></i>
+                        <span>Accueil / Hero</span>
+                    </button>
+                    <button onclick="switchTab('services')" id="tab-services" class="text-slate-400 hover:text-slate-200 px-3 py-2 whitespace-nowrap flex items-center space-x-2 transition-colors">
+                        <i class="fa-solid fa-list-check"></i>
+                        <span>Services</span>
+                    </button>
+                    <button onclick="switchTab('portfolio')" id="tab-portfolio" class="text-slate-400 hover:text-slate-200 px-3 py-2 whitespace-nowrap flex items-center space-x-2 transition-colors">
+                        <i class="fa-solid fa-briefcase"></i>
+                        <span>Projets</span>
+                    </button>
+                    <button onclick="switchTab('contact')" id="tab-contact" class="text-slate-400 hover:text-slate-200 px-3 py-2 whitespace-nowrap flex items-center space-x-2 transition-colors">
+                        <i class="fa-solid fa-envelope"></i>
+                        <span>Contact</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Customizer Tab Contents -->
+            <div class="flex-1 overflow-y-auto p-4 space-y-6 text-sm text-slate-300">
+                
+                <!-- TAB 1: DESIGN & THEMING -->
+                <div id="panel-design" class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Nom de Marque / Entreprise</label>
+                        <input type="text" id="input-brand-name" oninput="updateSiteData('brandName', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500 text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Couleur Principale</label>
+                        <div class="grid grid-cols-5 gap-2">
+                            <button onclick="setThemeColor('blue', '#3b82f6')" class="h-9 rounded-lg bg-blue-500 border-2 border-white/20 hover:scale-105 transition-transform flex items-center justify-center" title="Bleu Impérial"></button>
+                            <button onclick="setThemeColor('emerald', '#10b981')" class="h-9 rounded-lg bg-emerald-500 border-2 border-white/20 hover:scale-105 transition-transform flex items-center justify-center" title="Émeraude"></button>
+                            <button onclick="setThemeColor('violet', '#8b5cf6')" class="h-9 rounded-lg bg-violet-500 border-2 border-white/20 hover:scale-105 transition-transform flex items-center justify-center" title="Violet Moderne"></button>
+                            <button onclick="setThemeColor('rose', '#f43f5e')" class="h-9 rounded-lg bg-rose-500 border-2 border-white/20 hover:scale-105 transition-transform flex items-center justify-center" title="Rose Néon"></button>
+                            <button onclick="setThemeColor('amber', '#f59e0b')" class="h-9 rounded-lg bg-amber-500 border-2 border-white/20 hover:scale-105 transition-transform flex items-center justify-center" title="Ambre Warm"></button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Police de Caractères</label>
+                        <select id="select-font" onchange="updateSiteData('fontFamily', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500 text-sm">
+                            <option value="Inter">Inter (Épuré & Moderne)</option>
+                            <option value="Poppins">Poppins (Dynamique)</option>
+                            <option value="Roboto">Roboto (Classique)</option>
+                            <option value="Playfair Display">Playfair Display (Élégant & Premium)</option>
+                        </select>
+                    </div>
+
+                    <div class="pt-2 border-t border-slate-800">
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Mode Visuel du Site</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="setSiteTheme('light')" id="btn-site-light" class="py-2 px-3 rounded-lg border border-slate-700 bg-slate-900 text-white font-medium text-xs flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-sun text-amber-400"></i>
+                                <span>Thème Clair</span>
+                            </button>
+                            <button onclick="setSiteTheme('dark')" id="btn-site-dark" class="py-2 px-3 rounded-lg border border-slate-800 bg-slate-900/50 text-slate-400 font-medium text-xs flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-moon text-blue-400"></i>
+                                <span>Thème Sombre</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: HERO SECTION -->
+                <div id="panel-hero" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Titre Principal</label>
+                        <textarea id="input-hero-title" oninput="updateSiteData('heroTitle', this.value)" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500 text-sm resize-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Sous-titre / Description</label>
+                        <textarea id="input-hero-subtitle" oninput="updateSiteData('heroSubtitle', this.value)" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500 text-sm resize-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Texte du Bouton d'Action (CTA)</label>
+                        <input type="text" id="input-hero-cta" oninput="updateSiteData('heroCtaText', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500 text-sm">
+                    </div>
+                </div>
+
+                <!-- TAB 3: SERVICES SECTION -->
+                <div id="panel-services" class="space-y-5 hidden">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Gérer les Services</span>
+                        <button onclick="addServiceItem()" class="text-xs bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 px-2.5 py-1 rounded-md border border-blue-500/30 font-medium transition-all">
+                            <i class="fa-solid fa-plus mr-1"></i> Ajouter
+                        </button>
+                    </div>
+                    <div id="services-editor-list" class="space-y-4">
+                        <!-- Dynamic Service Form Items populated via JS -->
+                    </div>
+                </div>
+
+                <!-- TAB 4: PORTFOLIO SECTION -->
+                <div id="panel-portfolio" class="space-y-5 hidden">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Projets / Réalisations</span>
+                        <button onclick="addPortfolioItem()" class="text-xs bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 px-2.5 py-1 rounded-md border border-blue-500/30 font-medium transition-all">
+                            <i class="fa-solid fa-plus mr-1"></i> Ajouter
+                        </button>
+                    </div>
+                    <div id="portfolio-editor-list" class="space-y-4">
+                        <!-- Dynamic Portfolio Form Items populated via JS -->
+                    </div>
+                </div>
+
+                <!-- TAB 5: CONTACT SECTION -->
+                <div id="panel-contact" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Email de Contact Publique</label>
+                        <input type="email" id="input-contact-email" oninput="updateSiteData('contactEmail', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Téléphone (Optionnel)</label>
+                        <input type="text" id="input-contact-phone" oninput="updateSiteData('contactPhone', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Adresse ou Ville</label>
+                        <input type="text" id="input-contact-location" oninput="updateSiteData('contactLocation', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500 text-sm">
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Sidebar Footer Status -->
+            <div class="p-3 border-t border-slate-800 bg-slate-950 text-xs text-slate-500 flex items-center justify-between">
+                <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-emerald-500 inline-block mr-2"></span> Modifications enregistrées</span>
+                <span class="text-slate-600">v2.4 - HTML5/CSS3</span>
+            </div>
+        </aside>
+
+        <!-- Center Workspace: Live Preview Canvas -->
+        <main class="flex-1 bg-slate-900 flex flex-col items-center justify-start p-2 md:p-6 overflow-y-auto relative">
+            
+            <!-- Mobile Toggle Bar (Visible on mobile screens) -->
+            <div class="w-full flex md:hidden items-center justify-between mb-3 bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                <button onclick="toggleMobileSidebar()" class="text-xs bg-slate-800 text-slate-200 px-3 py-1.5 rounded-lg flex items-center space-x-2">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Menu Personnalisation</span>
+                </button>
+                <span class="text-xs text-slate-400 font-medium">Aperçu en Direct</span>
+            </div>
+
+            <!-- Viewport Canvas Container -->
+            <div id="viewport-container" class="device-viewport w-full max-w-6xl bg-white shadow-2xl rounded-2xl overflow-hidden transition-all duration-300 min-h-[800px] border border-slate-800">
+                
+                <!-- LIVE PREVIEW CONTAINER (Targeted by JS renderer) -->
+                <div id="live-site-preview" class="w-full h-full min-h-[800px]">
+                    <!-- Rendered dynamically -->
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL 1: EXPORT CODE -->
+    <div id="modal-export" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-3xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+            <!-- Modal Header -->
+            <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                        <i class="fa-solid fa-code"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-white">Votre Site est Prêt !</h3>
+                        <p class="text-xs text-slate-400">Code HTML & CSS autonome 100% gratuit et prêt à l'emploi</p>
+                    </div>
+                </div>
+                <button onclick="closeExportModal()" class="text-slate-400 hover:text-white p-2 rounded-lg"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="p-5 flex-1 overflow-y-auto space-y-4">
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Copiez le code ci-dessous dans un fichier nommé <code class="bg-slate-800 text-blue-400 px-1.5 py-0.5 rounded">index.html</code> ou téléchargez-le directement pour l'héberger gratuitement.
+                </p>
+
+                <!-- Code Container -->
+                <div class="relative group">
+                    <textarea id="exported-code-textarea" readonly class="w-full h-64 bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs font-mono text-emerald-400 focus:outline-none scrollbar-thin select-all"></textarea>
+                    <button onclick="copyGeneratedCode()" class="absolute top-3 right-3 bg-blue-600 hover:bg-blue-500 text-white text-xs px-3 py-1.5 rounded-lg shadow font-medium flex items-center space-x-1.5 transition-all">
+                        <i class="fa-solid fa-copy"></i>
+                        <span>Copier le Code</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 border-t border-slate-800 bg-slate-950 flex flex-wrap gap-2 items-center justify-between">
+                <button onclick="downloadHTMLFile()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold flex items-center space-x-2 transition-all">
+                    <i class="fa-solid fa-file-arrow-down"></i>
+                    <span>Télécharger index.html</span>
+                </button>
+                <button onclick="closeExportModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: HOSTING GUIDE -->
+    <div id="modal-hosting" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+            <!-- Modal Header -->
+            <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-white">Comment publier votre site gratuitement ?</h3>
+                        <p class="text-xs text-slate-400">3 plateformes simples et sans frais d'hébergement</p>
+                    </div>
+                </div>
+                <button onclick="closeHostingGuideModal()" class="text-slate-400 hover:text-white p-2 rounded-lg"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-5 flex-1 overflow-y-auto space-y-6 text-xs text-slate-300">
+                <!-- Method 1: Netlify Drop -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div class="flex items-center space-x-2 text-white font-semibold text-sm">
+                        <span class="w-5 h-5 rounded-full bg-blue-500 text-white text-xs flex items-center justify-center font-bold">1</span>
+                        <span>Netlify Drop (Le plus rapide - Sans code)</span>
+                    </div>
+                    <ol class="list-disc list-inside space-y-1 text-slate-400 pl-2">
+                        <li>Téléchargez votre fichier <code class="text-blue-400">index.html</code> depuis CréaSite Studio.</li>
+                        <li>Mettez ce fichier dans un dossier sur votre ordinateur.</li>
+                        <li>Rendez-vous sur <a href="https://app.netlify.com/drop" target="_blank" class="text-blue-400 underline">app.netlify.com/drop</a>.</li>
+                        <li>Glissez-déposez le dossier. Votre site est en ligne instantanément avec un lien HTTPS gratuit !</li>
+                    </ol>
+                </div>
+
+                <!-- Method 2: GitHub Pages -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div class="flex items-center space-x-2 text-white font-semibold text-sm">
+                        <span class="w-5 h-5 rounded-full bg-indigo-500 text-white text-xs flex items-center justify-center font-bold">2</span>
+                        <span>GitHub Pages (Idéal pour les développeurs)</span>
+                    </div>
+                    <ol class="list-disc list-inside space-y-1 text-slate-400 pl-2">
+                        <li>Créez un dépôt public sur <a href="https://github.com" target="_blank" class="text-blue-400 underline">GitHub.com</a>.</li>
+                        <li>Importez votre fichier <code class="text-blue-400">index.html</code> à la racine du dépôt.</li>
+                        <li>Allez dans <em>Settings &gt; Pages</em> et sélectionnez la branche principale.</li>
+                        <li>Votre site sera accessible sur <code class="text-emerald-400">votre-pseudo.github.io/mon-site</code>.</li>
+                    </ol>
+                </div>
+
+                <!-- Method 3: Vercel -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div class="flex items-center space-x-2 text-white font-semibold text-sm">
+                        <span class="w-5 h-5 rounded-full bg-violet-500 text-white text-xs flex items-center justify-center font-bold">3</span>
+                        <span>Vercel Hosting</span>
+                    </div>
+                    <p class="text-slate-400 pl-2">
+                        Glissez votre projet sur <a href="https://vercel.com" target="_blank" class="text-blue-400 underline">Vercel.com</a> pour bénéficier d'un réseau CDN ultra-rapide et sécurisé sans débourser un centime.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 border-t border-slate-800 bg-slate-950 flex justify-end">
+                <button onclick="closeHostingGuideModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-medium">
+                    J'ai Compris !
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+    <script>
+        /**
+         * APPLICATION STATE MANAGEMENT
+         * Holds all customizable attributes of the generated website
+         */
+        const siteData = {
+            brandName: "Nexus Digital",
+            theme: "light", // light or dark
+            primaryColorName: "blue",
+            primaryColorHex: "#3b82f6",
+            fontFamily: "Inter",
+            
+            // Hero Section
+            heroTitle: "Propulsez votre présence en ligne avec élégance",
+            heroSubtitle: "Nous concevons des solutions numériques sur-mesure, rapides et optimisées pour transformer vos visiteurs en clients fidèles.",
+            heroCtaText: "Explorer nos projets",
+
+            // Services
+            services: [
+                {
+                    title: "Développement Web",
+                    desc: "Création de sites modernes, ultra-rapides et parfaitement adaptés aux téléphones mobiles.",
+                    icon: "fa-code"
+                },
+                {
+                    title: "Design UI/UX",
+                    desc: "Maquettes intuitives et esthétiques garantissant une expérience utilisateur exceptionnelle.",
+                    icon: "fa-pen-ruler"
+                },
+                {
+                    title: "Référencement SEO",
+                    desc: "Optimisation pour les moteurs de recherche afin de maximiser votre visibilité sur Google.",
+                    icon: "fa-chart-line"
+                }
+            ],
+
+            // Portfolio / Projects
+            portfolio: [
+                {
+                    title: "E-Commerce Mode & Luxe",
+                    category: "Boutique en Ligne",
+                    image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=600&q=80",
+                    desc: "Plateforme e-commerce haute performance avec système de paiement sécurisé."
+                },
+                {
+                    title: "Application SaaS Financière",
+                    category: "Web App",
+                    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80",
+                    desc: "Tableau de bord de gestion financière temps réel pour entreprises."
+                },
+                {
+                    title: "Identité de Marque Gastronomie",
+                    category: "Branding",
+                    image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80",
+                    desc: "Création complète du site vitrine et du menu digital interactif."
+                }
+            ],
+
+            // Testimonials
+            testimonials: [
+                {
+                    name: "Sophie Martin",
+                    role: "Fondatrice, EcoStudio",
+                    text: "Un travail remarquable ! Notre nouveau site web a doublé nos demandes de devis en seulement un mois.",
+                    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80"
+                },
+                {
+                    name: "Alexandre Dubois",
+                    role: "Directeur Marketing",
+                    text: "Équipe réactive, design moderne et code impeccable. Je recommande les yeux fermés !",
+                    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80"
+                }
+            ],
+
+            // Contact
+            contactEmail: "contact@nexusdigital.fr",
+            contactPhone: "+33 1 23 45 67 89",
+            contactLocation: "Paris, France"
+        };
+
+        // Initialization on Load
+        window.onload = function() {
+            populateFormInputs();
+            renderServiceEditorList();
+            renderPortfolioEditorList();
+            renderLivePreview();
+        };
+
+        // Sync inputs with current state
+        function populateFormInputs() {
+            document.getElementById('input-brand-name').value = siteData.brandName;
+            document.getElementById('select-font').value = siteData.fontFamily;
+            document.getElementById('input-hero-title').value = siteData.heroTitle;
+            document.getElementById('input-hero-subtitle').value = siteData.heroSubtitle;
+            document.getElementById('input-hero-cta').value = siteData.heroCtaText;
+            document.getElementById('input-contact-email').value = siteData.contactEmail;
+            document.getElementById('input-contact-phone').value = siteData.contactPhone;
+            document.getElementById('input-contact-location').value = siteData.contactLocation;
+        }
+
+        // Update single site parameter
+        function updateSiteData(key, value) {
+            siteData[key] = value;
+            renderLivePreview();
+        }
+
+        // Color Theme selection
+        function setThemeColor(name, hex) {
+            siteData.primaryColorName = name;
+            siteData.primaryColorHex = hex;
+            renderLivePreview();
+            showToast(`Couleur principale changée : ${name}`);
+        }
+
+        // Light/Dark site view toggle
+        function setSiteTheme(theme) {
+            siteData.theme = theme;
+            const btnLight = document.getElementById('btn-site-light');
+            const btnDark = document.getElementById('btn-site-dark');
+
+            if (theme === 'light') {
+                btnLight.className = "py-2 px-3 rounded-lg border border-blue-500 bg-blue-500/10 text-white font-medium text-xs flex items-center justify-center space-x-2";
+                btnDark.className = "py-2 px-3 rounded-lg border border-slate-800 bg-slate-900/50 text-slate-400 font-medium text-xs flex items-center justify-center space-x-2";
+            } else {
+                btnDark.className = "py-2 px-3 rounded-lg border border-blue-500 bg-blue-500/10 text-white font-medium text-xs flex items-center justify-center space-x-2";
+                btnLight.className = "py-2 px-3 rounded-lg border border-slate-800 bg-slate-900/50 text-slate-400 font-medium text-xs flex items-center justify-center space-x-2";
+            }
+            renderLivePreview();
+        }
+
+        // Device Viewport Width Toggle
+        function setDeviceView(view) {
+            const viewport = document.getElementById('viewport-container');
+            const btnDesktop = document.getElementById('btn-view-desktop');
+            const btnTablet = document.getElementById('btn-view-tablet');
+            const btnMobile = document.getElementById('btn-view-mobile');
+
+            // Reset buttons
+            [btnDesktop, btnTablet, btnMobile].forEach(btn => {
+                btn.className = "px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 flex items-center space-x-2 transition-all";
+            });
+
+            if (view === 'desktop') {
+                viewport.style.maxWidth = '100%';
+                btnDesktop.className = "px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-white shadow-sm flex items-center space-x-2 transition-all";
+            } else if (view === 'tablet') {
+                viewport.style.maxWidth = '768px';
+                btnTablet.className = "px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-white shadow-sm flex items-center space-x-2 transition-all";
+            } else if (view === 'mobile') {
+                viewport.style.maxWidth = '375px';
+                btnMobile.className = "px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-white shadow-sm flex items-center space-x-2 transition-all";
+            }
+        }
+
+        // Sidebar Tab Switching
+        function switchTab(tabId) {
+            const tabs = ['design', 'hero', 'services', 'portfolio', 'contact'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                const panel = document.getElementById(`panel-${t}`);
+                if (t === tabId) {
+                    btn.className = "tab-active px-3 py-2 whitespace-nowrap flex items-center space-x-2 transition-colors";
+                    panel.classList.remove('hidden');
+                } else {
+                    btn.className = "text-slate-400 hover:text-slate-200 px-3 py-2 whitespace-nowrap flex items-center space-x-2 transition-colors";
+                    panel.classList.add('hidden');
+                }
+            });
+        }
+
+        // Mobile Sidebar Slide Toggle
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        // Services Dynamic CRUD
+        function renderServiceEditorList() {
+            const list = document.getElementById('services-editor-list');
+            list.innerHTML = siteData.services.map((serv, index) => `
+                <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl space-y-2 relative group">
+                    <button onclick="removeServiceItem(${index})" class="absolute top-2 right-2 text-slate-500 hover:text-rose-400 text-xs p-1">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                    <div class="text-xs font-semibold text-blue-400">Service #${index + 1}</div>
+                    <input type="text" value="${escapeHtml(serv.title)}" onchange="updateServiceField(${index}, 'title', this.value)" placeholder="Titre du service" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white text-xs">
+                    <textarea onchange="updateServiceField(${index}, 'desc', this.value)" rows="2" placeholder="Description" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white text-xs resize-none">${escapeHtml(serv.desc)}</textarea>
+                </div>
+            `).join('');
+        }
+
+        function addServiceItem() {
+            siteData.services.push({
+                title: "Nouveau Service",
+                desc: "Description courte de votre prestation.",
+                icon: "fa-star"
+            });
+            renderServiceEditorList();
+            renderLivePreview();
+        }
+
+        function removeServiceItem(index) {
+            if (siteData.services.length <= 1) {
+                showToast("Vous devez garder au moins 1 service.", "warning");
+                return;
+            }
+            siteData.services.splice(index, 1);
+            renderServiceEditorList();
+            renderLivePreview();
+        }
+
+        function updateServiceField(index, field, value) {
+            siteData.services[index][field] = value;
+            renderLivePreview();
+        }
+
+        // Portfolio Dynamic CRUD
+        function renderPortfolioEditorList() {
+            const list = document.getElementById('portfolio-editor-list');
+            list.innerHTML = siteData.portfolio.map((item, index) => `
+                <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl space-y-2 relative group">
+                    <button onclick="removePortfolioItem(${index})" class="absolute top-2 right-2 text-slate-500 hover:text-rose-400 text-xs p-1">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                    <div class="text-xs font-semibold text-indigo-400">Projet #${index + 1}</div>
+                    <input type="text" value="${escapeHtml(item.title)}" onchange="updatePortfolioField(${index}, 'title', this.value)" placeholder="Titre du projet" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white text-xs">
+                    <input type="text" value="${escapeHtml(item.category)}" onchange="updatePortfolioField(${index}, 'category', this.value)" placeholder="Catégorie (ex: Web App)" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white text-xs">
+                    <input type="text" value="${escapeHtml(item.image)}" onchange="updatePortfolioField(${index}, 'image', this.value)" placeholder="URL de l'image" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white text-xs">
+                </div>
+            `).join('');
+        }
+
+        function addPortfolioItem() {
+            siteData.portfolio.push({
+                title: "Nouveau Projet",
+                category: "Création Digital",
+                image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80",
+                desc: "Description du projet personnalisé."
+            });
+            renderPortfolioEditorList();
+            renderLivePreview();
+        }
+
+        function removePortfolioItem(index) {
+            if (siteData.portfolio.length <= 1) {
+                showToast("Vous devez garder au moins 1 projet.", "warning");
+                return;
+            }
+            siteData.portfolio.splice(index, 1);
+            renderPortfolioEditorList();
+            renderLivePreview();
+        }
+
+        function updatePortfolioField(index, field, value) {
+            siteData.portfolio[index][field] = value;
+            renderLivePreview();
+        }
+
+        /**
+         * Renders the HTML template into the preview iframe/container
+         */
+        function renderLivePreview() {
+            const previewContainer = document.getElementById('live-site-preview');
+            const generatedHtml = generateCompleteHTML();
+            previewContainer.innerHTML = generatedHtml;
+        }
+
+        // Utility: HTML Escaping
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
+
+        /**
+         * Generates clean, standalone HTML5 document ready for export
+         */
+        function generateCompleteHTML() {
+            const isDark = siteData.theme === 'dark';
+            
+            // Dynamic theme class mappings based on color
+            const colorMap = {
+                blue: { bg: 'bg-blue-600', hover: 'hover:bg-blue-700', text: 'text-blue-600', border: 'border-blue-600', ring: 'ring-blue-500', gradient: 'from-blue-600 to-indigo-600' },
+                emerald: { bg: 'bg-emerald-600', hover: 'hover:bg-emerald-700', text: 'text-emerald-600', border: 'border-emerald-600', ring: 'ring-emerald-500', gradient: 'from-emerald-600 to-teal-600' },
+                violet: { bg: 'bg-violet-600', hover: 'hover:bg-violet-700', text: 'text-violet-600', border: 'border-violet-600', ring: 'ring-violet-500', gradient: 'from-violet-600 to-purple-600' },
+                rose: { bg: 'bg-rose-600', hover: 'hover:bg-rose-700', text: 'text-rose-600', border: 'border-rose-600', ring: 'ring-rose-500', gradient: 'from-rose-600 to-pink-600' },
+                amber: { bg: 'bg-amber-600', hover: 'hover:bg-amber-700', text: 'text-amber-600', border: 'border-amber-600', ring: 'ring-amber-500', gradient: 'from-amber-500 to-orange-600' }
+            };
+            const activeColor = colorMap[siteData.primaryColorName] || colorMap.blue;
+
+            // Background & Text Theme styles
+            const pageBg = isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-800';
+            const cardBg = isDark ? 'bg-slate-900/80 border-slate-800' : 'bg-white border-slate-200/80';
+            const navBg = isDark ? 'bg-slate-950/80 border-slate-800' : 'bg-white/80 border-slate-200/80';
+            const mutedText = isDark ? 'text-slate-400' : 'text-slate-600';
+
+            return `
+            <div class="${pageBg} font-['${siteData.fontFamily}'] min-h-full transition-colors duration-200" style="font-family: '${siteData.fontFamily}', sans-serif;">
+                
+                <!-- HEADER / NAVIGATION -->
+                <nav class="sticky top-0 z-40 backdrop-blur-md border-b ${navBg} px-6 py-4">
+                    <div class="max-w-6xl mx-auto flex items-center justify-between">
+                        <a href="#" class="text-xl font-bold tracking-tight flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded-full ${activeColor.bg}"></span>
+                            <span>${escapeHtml(siteData.brandName)}</span>
+                        </a>
+                        <div class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                            <a href="#services" class="hover:${activeColor.text} transition-colors">Services</a>
+                            <a href="#projets" class="hover:${activeColor.text} transition-colors">Réalisations</a>
+                            <a href="#temoignages" class="hover:${activeColor.text} transition-colors">Avis</a>
+                            <a href="#contact" class="hover:${activeColor.text} transition-colors">Contact</a>
+                        </div>
+                        <a href="#contact" class="${activeColor.bg} ${activeColor.hover} text-white px-4 py-2 rounded-xl text-xs font-semibold shadow-lg shadow-blue-500/10 transition-all">
+                            Contactez-nous
+                        </a>
+                    </div>
+                </nav>
+
+                <!-- HERO SECTION -->
+                <section class="px-6 py-20 md:py-28 max-w-6xl mx-auto text-center relative overflow-hidden">
+                    <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-semibold ${isDark ? 'bg-slate-900 border border-slate-800 text-slate-300' : 'bg-slate-200/70 text-slate-700'} mb-6">
+                        <span class="w-2 h-2 rounded-full ${activeColor.bg} animate-pulse"></span>
+                        <span>Disponible pour vos nouveaux projets</span>
+                    </div>
+
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight max-w-4xl mx-auto leading-tight mb-6">
+                        ${escapeHtml(siteData.heroTitle)}
+                    </h1>
+
+                    <p class="text-base sm:text-lg ${mutedText} max-w-2xl mx-auto mb-8 font-normal">
+                        ${escapeHtml(siteData.heroSubtitle)}
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <a href="#projets" class="${activeColor.bg} ${activeColor.hover} text-white px-7 py-3.5 rounded-xl font-semibold text-sm shadow-xl transition-all hover:scale-105">
+                            ${escapeHtml(siteData.heroCtaText)} <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                        </a>
+                        <a href="#contact" class="px-7 py-3.5 rounded-xl font-semibold text-sm border ${isDark ? 'border-slate-800 hover:bg-slate-900' : 'border-slate-300 hover:bg-slate-100'} transition-all">
+                            Demander un devis
+                        </a>
+                    </div>
+                </section>
+
+                <!-- SERVICES SECTION -->
+                <section id="services" class="px-6 py-16 max-w-6xl mx-auto">
+                    <div class="text-center max-w-xl mx-auto mb-12">
+                        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-3">Nos Domaines d'Expertise</h2>
+                        <p class="text-sm ${mutedText}">Des solutions adaptées pour accélérer votre croissance</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        ${siteData.services.map(s => `
+                            <div class="${cardBg} border p-6 rounded-2xl transition-all duration-200 hover:-translate-y-1 shadow-sm">
+                                <div class="w-12 h-12 rounded-xl ${activeColor.bg}/10 ${activeColor.text} flex items-center justify-center text-xl mb-4">
+                                    <i class="fa-solid ${s.icon || 'fa-star'}"></i>
+                                </div>
+                                <h3 class="text-lg font-bold mb-2">${escapeHtml(s.title)}</h3>
+                                <p class="text-xs leading-relaxed ${mutedText}">${escapeHtml(s.desc)}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>
+
+                <!-- PORTFOLIO SECTION -->
+                <section id="projets" class="px-6 py-16 max-w-6xl mx-auto">
+                    <div class="text-center max-w-xl mx-auto mb-12">
+                        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-3">Projets Récents</h2>
+                        <p class="text-sm ${mutedText}">Découvrez nos dernières réalisations clients</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        ${siteData.portfolio.map(p => `
+                            <div class="${cardBg} border rounded-2xl overflow-hidden shadow-sm group">
+                                <div class="h-48 overflow-hidden relative">
+                                    <img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/600x400/1e293b/ffffff?text=Projet'">
+                                    <span class="absolute top-3 left-3 bg-slate-900/80 backdrop-blur text-white text-[10px] font-semibold px-2.5 py-1 rounded-full">
+                                        ${escapeHtml(p.category)}
+                                    </span>
+                                </div>
+                                <div class="p-5">
+                                    <h3 class="font-bold text-base mb-1">${escapeHtml(p.title)}</h3>
+                                    <p class="text-xs ${mutedText} line-clamp-2">${escapeHtml(p.desc || '')}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>
+
+                <!-- TESTIMONIALS SECTION -->
+                <section id="temoignages" class="px-6 py-16 max-w-6xl mx-auto">
+                    <div class="text-center max-w-xl mx-auto mb-12">
+                        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-3">Ce que disent nos clients</h2>
+                        <p class="text-sm ${mutedText}">La satisfaction de nos partenaires est notre priorité</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        ${siteData.testimonials.map(t => `
+                            <div class="${cardBg} border p-6 rounded-2xl space-y-4 shadow-sm">
+                                <div class="flex items-center space-x-1 text-amber-400 text-xs">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                                <p class="text-xs italic leading-relaxed text-slate-300">"${escapeHtml(t.text)}"</p>
+                                <div class="flex items-center space-x-3 pt-2">
+                                    <img src="${escapeHtml(t.avatar)}" class="w-10 h-10 rounded-full object-cover" alt="${escapeHtml(t.name)}">
+                                    <div>
+                                        <h4 class="text-xs font-bold">${escapeHtml(t.name)}</h4>
+                                        <p class="text-[11px] ${mutedText}">${escapeHtml(t.role)}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>
+
+                <!-- CONTACT FORM SECTION -->
+                <section id="contact" class="px-6 py-16 max-w-4xl mx-auto">
+                    <div class="${cardBg} border rounded-3xl p-8 sm:p-12 shadow-xl">
+                        <div class="text-center max-w-xl mx-auto mb-8">
+                            <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-2">Parlons de votre projet</h2>
+                            <p class="text-xs ${mutedText}">Envoyez-nous un message et nous vous répondrons sous 24 heures.</p>
+                        </div>
+
+                        <form onsubmit="handleDemoSubmit(event)" class="space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium mb-1">Votre Nom</label>
+                                    <input type="text" required placeholder="Jean Dupont" class="w-full ${isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-100 border-slate-200'} border rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-2 ${activeColor.ring}">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium mb-1">Adresse Email</label>
+                                    <input type="email" required placeholder="jean@exemple.fr" class="w-full ${isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-100 border-slate-200'} border rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-2 ${activeColor.ring}">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium mb-1">Message</label>
+                                <textarea rows="4" required placeholder="Décrivez brièvement votre besoin..." class="w-full ${isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-100 border-slate-200'} border rounded-xl p-4 text-xs focus:outline-none focus:ring-2 ${activeColor.ring} resize-none"></textarea>
+                            </div>
+                            <button type="submit" class="w-full ${activeColor.bg} ${activeColor.hover} text-white font-semibold py-3 rounded-xl text-xs shadow-lg transition-all">
+                                Envoyer le message
+                            </button>
+                        </form>
+
+                        <div class="mt-8 pt-8 border-t ${isDark ? 'border-slate-800' : 'border-slate-200'} flex flex-wrap justify-between items-center text-xs ${mutedText} gap-4">
+                            <div class="flex items-center space-x-2">
+                                <i class="fa-solid fa-envelope ${activeColor.text}"></i>
+                                <span>${escapeHtml(siteData.contactEmail)}</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <i class="fa-solid fa-phone ${activeColor.text}"></i>
+                                <span>${escapeHtml(siteData.contactPhone)}</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <i class="fa-solid fa-location-dot ${activeColor.text}"></i>
+                                <span>${escapeHtml(siteData.contactLocation)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- FOOTER -->
+                <footer class="border-t ${isDark ? 'border-slate-900 bg-slate-950' : 'border-slate-200 bg-white'} px-6 py-8 text-center text-xs ${mutedText}">
+                    <p>© ${new Date().getFullYear()} ${escapeHtml(siteData.brandName)}. Tous droits réservés.</p>
+                </footer>
+
+            </div>
+            `;
+        }
+
+        // Contact form dummy submit handler inside live preview
+        function handleDemoSubmit(e) {
+            e.preventDefault();
+            showToast("Formulaire de démonstration envoyé avec succès !");
+        }
+
+        // Export Modal Opener
+        function openExportModal() {
+            const modal = document.getElementById('modal-export');
+            const textarea = document.getElementById('exported-code-textarea');
+            
+            // Build standalone standalone HTML doc with head & CSS
+            const completeStandaloneDoc = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${escapeHtml(siteData.brandName)}</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"><\/script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=${encodeURIComponent(siteData.fontFamily)}:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="antialiased">
+${generateCompleteHTML()}
+    <script>
+        function handleDemoSubmit(e) {
+            e.preventDefault();
+            alert("Merci ! Votre message a bien été envoyé.");
+        }
+    <\/script>
+</body>
+</html>`;
+
+            textarea.value = completeStandaloneDoc;
+            modal.classList.remove('hidden');
+        }
+
+        function closeExportModal() {
+            document.getElementById('modal-export').classList.add('hidden');
+        }
+
+        // Hosting Guide Modal
+        function openHostingGuideModal() {
+            document.getElementById('modal-hosting').classList.remove('hidden');
+        }
+
+        function closeHostingGuideModal() {
+            document.getElementById('modal-hosting').classList.add('hidden');
+        }
+
+        // Copy Code utility using fallback
+        function copyGeneratedCode() {
+            const textarea = document.getElementById('exported-code-textarea');
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast("Code HTML copié dans le presse-papier !");
+            } catch (err) {
+                showToast("Échec de la copie. Veuillez copier manuellement.", "warning");
+            }
+        }
+
+        // Download HTML File utility
+        function downloadHTMLFile() {
+            const textarea = document.getElementById('exported-code-textarea');
+            const blob = new Blob([textarea.value], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'index.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast("Fichier index.html téléchargé !");
+        }
+
+        // Custom Toast Notification System
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const bgColor = type === 'warning' ? 'bg-amber-600' : 'bg-emerald-600';
+            const icon = type === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-check';
+
+            toast.className = `${bgColor} text-white px-4 py-3 rounded-xl shadow-xl text-xs font-semibold flex items-center space-x-2 transform translate-y-4 opacity-0 transition-all duration-300 pointer-events-auto`;
+            toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${escapeHtml(message)}</span>`;
+
+            container.appendChild(toast);
+
+            // Animate in
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            }, 10);
+
+            // Remove after 3s
+            setTimeout(() => {
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => {
+                    if (toast.parentNode) toast.parentNode.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
